@@ -23,14 +23,14 @@ public class UsersTests {
 
 	@Test
 	public void addUserTest() {
-//		User user = new User();
-//		user.setFirstName("damian");
-//		user.setLastName("garcia");
-//		user.setUsername("damian");
-//		user.setAge(32);
-//		user.setEnabled(1);
-//		user.setPassword("4113");
-//		User result;
+		User user = new User();
+		user.setFirstName("damian");
+		user.setLastName("garcia");
+		user.setUsername("damian");
+		user.setAge(32);
+		user.setEnabled(1);
+		user.setPassword("4113");
+		User result;
 //		try {
 //			result = userService.save(user);
 //			assertTrue(result.getPassword().equals(user.getPassword()));
