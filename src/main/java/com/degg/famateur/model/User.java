@@ -12,11 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
-import org.springframework.data.rest.core.annotation.RestResource;
 
 @Entity
 @Table(name = "users")
@@ -31,7 +27,6 @@ public class User {
 	private String username;
 	
 	@Column(name = "password", length = 75)
-	@RestResource(exported = false)
 	private String password;
 	
 	@Column(name = "first_name", length = 75)
@@ -52,9 +47,6 @@ public class User {
        joinColumns={@JoinColumn(name="USER_ID", referencedColumnName="ID")},
        inverseJoinColumns={@JoinColumn(name="ROLE_ID", referencedColumnName="ID")})
     private List<Role> roles;
-	
-	@OneToMany(cascade=CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
-    private List<UserNotification> notifications;
 	
 	public Long getId() {
 		return id;
@@ -105,11 +97,5 @@ public class User {
 	public void setRoles(List<Role> roles) {
 		this.roles = roles;
 	}
-	public List<UserNotification> getNotifications() {
-		return notifications;
-	}
-	public void setNotifications(List<UserNotification> notifications) {
-		this.notifications = notifications;
-	}
-	
+
 }

@@ -23,8 +23,8 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter{
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
-		.antMatchers(HttpMethod.GET, "/").permitAll()
-		.antMatchers(HttpMethod.GET, "/api/users").permitAll()
+		.antMatchers(HttpMethod.GET, "/**").permitAll()
+		.antMatchers(HttpMethod.GET, "/api/**").permitAll()
 		.anyRequest().authenticated()
 		.and().cors().configurationSource(corsConfigurationSource());
 	}
@@ -35,9 +35,6 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter{
 		config.setAllowedOrigins(Arrays.asList("*"));
 		config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 		config.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization"));
-//		config.setAllowedOrigins(Arrays.asList("*"));
-//		config.setAllowedMethods(Arrays.asList("*"));
-//		config.setAllowedHeaders(Arrays.asList("*"));
 		config.setAllowCredentials(Boolean.TRUE);
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", config);
