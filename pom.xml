@@ -42,7 +42,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-tomcat</artifactId>
-            <scope>provided</scope>
+            <scope>compile</scope>
         </dependency>
 
         <!-- To compile JSP files -->
@@ -106,6 +106,11 @@
 		
 		<!-- Spring security -->
 		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+
+		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-web</artifactId>
 		</dependency>
@@ -114,12 +119,13 @@
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-config</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-taglibs</artifactId>
+			<artifactId>spring-security-test</artifactId>
+			<scope>test</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
@@ -133,7 +139,7 @@
 		</dependency>
 		
 		<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-jwt -->
-		<dependency>	
+		<dependency>
 		    <groupId>org.springframework.security</groupId>
 		    <artifactId>spring-security-jwt</artifactId>
 		    <version>1.0.10.RELEASE</version>
@@ -145,46 +151,6 @@
 			<artifactId>lombok</artifactId>
 			<version>1.18.10</version>
 			<scope>provided</scope>
-		</dependency>
-
-		<!-- Spring Data Rest-->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-rest</artifactId>
-		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/io.cucumber/cucumber-java -->
-		<dependency>
-			<groupId>io.cucumber</groupId>
-			<artifactId>cucumber-java</artifactId>
-			<version>5.0.0-RC4</version>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/io.cucumber/cucumber-junit -->
-		<dependency>
-			<groupId>io.cucumber</groupId>
-			<artifactId>cucumber-junit</artifactId>
-			<version>5.0.0-RC4</version>
-			<scope>test</scope>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/io.cucumber/cucumber-testng -->
-		<dependency>
-			<groupId>io.cucumber</groupId>
-			<artifactId>cucumber-testng</artifactId>
-			<version>5.0.0-RC4</version>
-		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/io.cucumber/cucumber-java8 -->
-		<dependency>
-			<groupId>io.cucumber</groupId>
-			<artifactId>cucumber-java8</artifactId>
-			<version>5.0.0-RC4</version>
-		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/io.cucumber/cucumber-spring -->
-		<dependency>
-			<groupId>io.cucumber</groupId>
-			<artifactId>cucumber-spring</artifactId>
-			<version>5.0.0-RC4</version>
 		</dependency>
 
 	</dependencies>

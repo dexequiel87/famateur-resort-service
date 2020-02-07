@@ -1,25 +1,23 @@
 package com.degg.famateur.service;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
-
+import com.degg.famateur.exception.NoSuchUserException;
+import com.degg.famateur.model.User;
+import com.degg.famateur.repository.jpa.IUserJpaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.degg.famateur.exception.NoSuchUserException;
-import com.degg.famateur.model.User;
-import com.degg.famateur.repository.jpa.IUserJpaRepository;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
-public class UserServiceImpl implements IUserService {
+public class UserServiceImpl implements UserService {
 
 	@Autowired
 	IUserJpaRepository repository;
@@ -31,10 +29,9 @@ public class UserServiceImpl implements IUserService {
 	
 	/**
 	 * Add a User
-	 * @throws NoSuchUserException 
 	 */
 	@Override
-	public User save(User user) throws NoSuchUserException {
+	public User save(User user) {
 		user.setPassword(bcrypt.encode(user.getPassword()));
 		return repository.save(user);
 	}
@@ -51,7 +48,7 @@ public class UserServiceImpl implements IUserService {
 	
 	@Override
 	public User getOne(Long id) throws NoSuchUserException {
-		return repository.findById(id).orElseThrow(() -> new NoSuchUserException("No User exists with the id " + String.valueOf(id)));
+		return repository.findById(id).orElseThrow(() -> new NoSuchUserException("No User exists with the id " + id));
 	}
 
 	@Override

@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class LoggingAspect {
 	
-	Log LOGGER = LogFactory.getLog(LoggingAspect.class);
+	final Log LOGGER = LogFactory.getLog(LoggingAspect.class);
 
 	@Pointcut("execution(* com.degg.famateur.service.*.*(..))")
 	private void services() {}
@@ -23,7 +23,7 @@ public class LoggingAspect {
 		StringBuilder methodCall = new StringBuilder("Calling: "  + joinPoint.getSignature().getName() + "(");
 		for (int i = 0; i < joinPoint.getArgs().length; i++) {
 			Object arg = joinPoint.getArgs()[i];
-			methodCall.append(String.valueOf(arg));
+			methodCall.append(arg);
 			if (i < joinPoint.getArgs().length - 1) {
 				methodCall.append(", ");
 			}
@@ -37,6 +37,6 @@ public class LoggingAspect {
 			returning = "result"
 			)
 	private void logMethodReturn(JoinPoint joinPoint, Object result) {
-		LOGGER.info(joinPoint.getSignature().getName() + " method returning: " + String.valueOf(result));
+		LOGGER.info(joinPoint.getSignature().getName() + " method returning: " + result);
 	}
 }

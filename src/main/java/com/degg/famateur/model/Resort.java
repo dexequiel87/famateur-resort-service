@@ -1,11 +1,10 @@
 package com.degg.famateur.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.Null;
+
 
 @Data
 @NoArgsConstructor
@@ -15,6 +14,7 @@ import javax.persistence.*;
 public class Resort {
 
     @Id
+    @Null
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
@@ -26,4 +26,6 @@ public class Resort {
 
     @Column
     private Boolean enabled;
+
+
 }

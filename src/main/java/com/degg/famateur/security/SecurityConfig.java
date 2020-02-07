@@ -16,33 +16,34 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-	@Autowired
-	UserDetailsService usersService;
-	
-	@Override
-	@Autowired
-	public void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(usersService).passwordEncoder(passwordEncoder());
-	}
-	
-	@Override
-	public void configure(HttpSecurity http) throws Exception {
-		http.authorizeRequests()
-		.anyRequest().authenticated()
-		.and()
-		.csrf().disable()
-		.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-	}
-	
-	
-	@Bean
-	BCryptPasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
+    @Autowired
+    UserDetailsService usersService;
 
-	@Bean("authenticationManager")
-	@Override
-	public AuthenticationManager authenticationManager() throws Exception {
-		return super.authenticationManager();
-	}
+    @Override
+    @Autowired
+    public void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(usersService).passwordEncoder(passwordEncoder());
+    }
+
+    @Override
+    public void configure(HttpSecurity http) throws Exception {
+        http.authorizeRequests()
+                .antMatchers("/api/**").permitAll()
+                .anyRequest().authenticated()
+                .and()
+                .csrf().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+    }
+
+
+    @Bean
+    BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean("authenticationManager")
+    @Override
+    public AuthenticationManager authenticationManager() throws Exception {
+        return super.authenticationManager();
+    }
 }
