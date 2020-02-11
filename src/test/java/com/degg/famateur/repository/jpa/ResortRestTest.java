@@ -79,8 +79,7 @@ public class ResortRestTest {
         mockMvc.perform(get(endpointUrl)
                 .param("pageSize", "20")
                 .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andDo(result -> System.out.println(result.getResponse().getContentAsString()));
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -90,8 +89,7 @@ public class ResortRestTest {
 
         mockMvc.perform(get(endpointUrl + validId)
                 .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andDo(result -> System.out.println(result.getResponse().getContentAsString()));
+                .andExpect(status().isOk());
     }
 
 
