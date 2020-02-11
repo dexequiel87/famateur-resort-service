@@ -28,20 +28,20 @@ public interface UserService extends UserDetailsService{
 	 * @param id	the id of the {@link User} to delete
 	 * @see 		User
 	 */
-	void delete(Long id);
+	void delete(String id);
 	
 	/**
 	 * Returns a {@link User} for a given id
 	 * @param id	the id of the {@link User} to get
 	 * @return		an Optional<User> instance for the given id.
 	 */
-	User getOne(Long id) throws NoSuchUserException;
+    User getOne(String id) throws NoSuchUserException;
 
-	/**
+    /**
 	 * Updates a {@link User} for a given
 	 * @param id the id of the User to update
 	 * @param user	The User to be saved
 	 * @see User
 	 */
-	User update(Long id, User user);
+	User update(String id, User user);
 }

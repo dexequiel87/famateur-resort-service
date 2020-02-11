@@ -2,7 +2,7 @@ package com.degg.famateur.service;
 
 import com.degg.famateur.exception.NoSuchUserException;
 import com.degg.famateur.model.User;
-import com.degg.famateur.repository.jpa.IUserJpaRepository;
+import com.degg.famateur.repository.mongo.UserMongoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.GrantedAuthority;
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
 
 	@Autowired
-	IUserJpaRepository repository;
+	UserMongoRepository repository;
 //	IUserHibernateRepository repository;
 	
 	@Autowired
@@ -42,17 +42,17 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void delete(Long id) {
+	public void delete(String id) {
 		repository.deleteById(id);		
 	}	
 	
 	@Override
-	public User getOne(Long id) throws NoSuchUserException {
+	public User getOne(String id) throws NoSuchUserException {
 		return repository.findById(id).orElseThrow(() -> new NoSuchUserException("No User exists with the id " + id));
 	}
 
 	@Override
-	public User update(Long id, User user) {
+	public User update(String id, User user) {
 		return repository.save(user);
 		
 	}

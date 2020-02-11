@@ -4,3 +4,5 @@
 
 #### Spring Boot microservice for resorts management
 
+### MongoDB
+Famateur Services data is stored in a MongoDB database to gain speed and simplicity
