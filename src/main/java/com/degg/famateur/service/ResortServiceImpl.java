@@ -2,7 +2,7 @@ package com.degg.famateur.service;
 
 import com.degg.famateur.exception.ResortNotFoundException;
 import com.degg.famateur.model.Resort;
-import com.degg.famateur.repository.jpa.IResortJpaRepository;
+import com.degg.famateur.repository.mongo.ResortMongoRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,9 +11,9 @@ import java.util.List;
 public class ResortServiceImpl implements ResortService {
 
 
-    private final IResortJpaRepository repository;
+    private final ResortMongoRepository repository;
 
-    public ResortServiceImpl(IResortJpaRepository repository) {
+    public ResortServiceImpl(ResortMongoRepository repository) {
         this.repository = repository;
     }
 
@@ -35,7 +35,7 @@ public class ResortServiceImpl implements ResortService {
      * @return a Resort for the specified id
      */
     @Override
-    public Resort findById(Long id) {
+    public Resort findById(String id) {
         return repository.findById(id).orElseThrow(() -> new ResortNotFoundException(
                 String.format("No resorts found for id = %s", id)));
     }
@@ -61,7 +61,7 @@ public class ResortServiceImpl implements ResortService {
      * @return the Resort saved with its corresponding id
      */
     @Override
-    public Resort save(Long id, Resort resort) {
+    public Resort save(String id, Resort resort) {
         Resort storedResort = repository.findById(id).orElse(resort);
         storedResort.setId(id);
         storedResort.setDescription(resort.getDescription());
@@ -88,7 +88,7 @@ public class ResortServiceImpl implements ResortService {
      * @param id the id of the Resort to delete
      */
     @Override
-    public void deleteById(long id) {
+    public void deleteById(String id) {
         repository.deleteById(id);
     }
 }

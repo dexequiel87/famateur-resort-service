@@ -47,13 +47,13 @@ public class ResortRestTest {
     @MockBean
     UserService userService;
 
-    private long validId;
+    private String validId;
     private String endpointUrl;
 
 
     @BeforeEach
     void before() {
-        validId = 1L;
+        validId = "9451d9c51sc1s5d1csd231c";
         endpointUrl = "/api/v1/resorts/";
 
         mockMvc = MockMvcBuilders.webAppContextSetup(context)
@@ -63,7 +63,7 @@ public class ResortRestTest {
 
     private Resort getValidResort() {
         return Resort.builder()
-                .id(1L)
+                .id("9451d9c51sc1s5d1csd231c")
                 .title("Mocked Resort 1")
                 .description("Mocked Resort 1 long description")
                 .enabled(Boolean.TRUE)
@@ -115,7 +115,7 @@ public class ResortRestTest {
     void badRequestCreate() throws Exception {
 
         Resort resort = Resort.builder()
-                .id(1L)
+                .id("9451d9c51sc1s5d1csd231c")
                 .title("Test Resort 1")
                 .description("Test Resort 1 long description")
                 .enabled(Boolean.TRUE)
@@ -133,7 +133,7 @@ public class ResortRestTest {
     void badRequestUpdate() throws Exception {
 
         Resort resort = Resort.builder()
-                .id(1L)
+                .id("9451d9c51sc1s5d1csd231c")
                 .title("Test Resort 1")
                 .description("Test Resort 1 long description")
                 .enabled(Boolean.TRUE)
@@ -151,7 +151,7 @@ public class ResortRestTest {
     void update() throws Exception {
 
         Resort resort = Resort.builder()
-                .id(1L)
+                .id("9451d9c51sc1s5d1csd231c")
                 .title("Test Resort 1")
                 .description("Test Resort 1 long description")
                 .enabled(Boolean.TRUE)

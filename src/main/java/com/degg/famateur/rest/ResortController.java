@@ -25,7 +25,7 @@ public class ResortController {
 
 
     @GetMapping("/{id}")
-    public ResponseEntity<Resort> get(@PathVariable("id") Long id) {
+    public ResponseEntity<Resort> get(@PathVariable("id") String id) {
         return new ResponseEntity<>(service.findById(id), HttpStatus.OK);
     }
 
@@ -37,12 +37,12 @@ public class ResortController {
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<Resort> update(@Valid @PathVariable("id") Long id, @RequestBody Resort resort) {
+    public ResponseEntity<Resort> update(@Valid @PathVariable("id") String id, @RequestBody Resort resort) {
         return new ResponseEntity<>(service.save(resort), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity delete(@PathVariable("id") Long id) {
+    public ResponseEntity delete(@PathVariable("id") String id) {
         service.deleteById(id);
         return new ResponseEntity(HttpStatus.OK);
     }

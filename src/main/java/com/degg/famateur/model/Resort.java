@@ -1,6 +1,7 @@
 package com.degg.famateur.model;
 
 import lombok.*;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.*;
 import javax.validation.constraints.Null;
@@ -10,13 +11,13 @@ import javax.validation.constraints.Null;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Entity(name = "resorts")
+@Document(collection = "resorts")
 public class Resort {
 
     @Id
     @Null
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private String id;
 
     @Column
     private String title;
@@ -26,6 +27,4 @@ public class Resort {
 
     @Column
     private Boolean enabled;
-
-
 }

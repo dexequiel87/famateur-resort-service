@@ -21,7 +21,7 @@ public interface ResortService {
      * @param id the id of the Resort
      * @return a Resort for the specified id
      */
-    Resort findById(Long id);
+    Resort findById(String id);
 
 
     /**
@@ -40,7 +40,7 @@ public interface ResortService {
      * @param resort the updated Resort
      * @return the Resort saved with its corresponding id
      */
-    Resort save(Long id, Resort resort);
+    Resort save(String id, Resort resort);
 
 
     /**
@@ -56,5 +56,5 @@ public interface ResortService {
      *
      * @param id the id of the Resort to delete
      */
-    void deleteById(long id);
+    void deleteById(String id);
 }
