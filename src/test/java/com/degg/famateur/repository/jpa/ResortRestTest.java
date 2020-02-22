@@ -2,7 +2,7 @@ package com.degg.famateur.repository.jpa;
 
 import com.degg.famateur.FamateurApplication;
 import com.degg.famateur.model.Resort;
-import com.degg.famateur.rest.ResortController;
+import com.degg.famateur.rest.controller.ResortController;
 import com.degg.famateur.service.ResortService;
 import com.degg.famateur.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
