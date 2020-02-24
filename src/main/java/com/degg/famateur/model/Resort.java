@@ -4,7 +4,6 @@ import lombok.*;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.*;
-import javax.validation.constraints.Null;
 
 
 @Data
@@ -15,7 +14,6 @@ import javax.validation.constraints.Null;
 public class Resort {
 
     @Id
-    @Null
     @GeneratedValue(strategy = GenerationType.AUTO)
     private String id;
 
