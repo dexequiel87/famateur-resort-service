@@ -22,6 +22,7 @@
 		<maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
 		<springframework.version>5.0.2.RELEASE</springframework.version>
 		<springsecurity.version>5.0.0.RELEASE</springsecurity.version>
+		<spring-restdocs.version>2.0.4.RELEASE</spring-restdocs.version>
 	</properties>
 
 	<dependencies>
@@ -149,7 +150,28 @@
 			<version>2.9.2</version>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/org.springframework.restdocs/spring-restdocs-mockmvc -->
+		<dependency>
+			<groupId>org.springframework.restdocs</groupId>
+			<artifactId>spring-restdocs-mockmvc</artifactId>
+			<version>2.0.4.RELEASE</version>
+			<scope>test</scope>
+		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/org.springframework.restdocs/spring-restdocs-asciidoctor -->
+		<dependency>
+			<groupId>org.springframework.restdocs</groupId>
+			<artifactId>spring-restdocs-asciidoctor</artifactId>
+			<version>2.0.4.RELEASE</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/capital.scalable/spring-auto-restdocs-docs -->
+		<dependency>
+			<groupId>capital.scalable</groupId>
+			<artifactId>spring-auto-restdocs-core</artifactId>
+			<version>2.0.7</version>
+			<scope>test</scope>
+		</dependency>
 
 	</dependencies>
 
@@ -158,6 +180,75 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.asciidoctor</groupId>
+				<artifactId>asciidoctor-maven-plugin</artifactId>
+				<version>1.6.0</version>
+				<executions>
+					<execution>
+						<id>generate-docs</id>
+						<phase>package</phase>
+						<goals>
+							<goal>process-asciidoc</goal>
+						</goals>
+						<configuration>
+							<backend>html</backend>
+							<doctype>book</doctype>
+							<attributes>
+								<snippets>${project.build.directory}/generated-snippets</snippets>
+							</attributes>
+						</configuration>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>org.springframework.restdocs</groupId>
+						<artifactId>spring-restdocs-mockmvc</artifactId>
+						<version>${spring-restdocs.version}</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<includes>
+						<include>**/*Test.java</include>
+					</includes>
+					<systemPropertyVariables>
+						<org.springframework.restdocs.outputDir>
+							${project.build.directory}/generated-snippets
+						</org.springframework.restdocs.outputDir>
+						<org.springframework.restdocs.javadocJsonDir>
+							${project.build.directory}/generated-javadoc-json
+						</org.springframework.restdocs.javadocJsonDir>
+					</systemPropertyVariables>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<extensions>true</extensions>
+				<executions>
+					<execution>
+						<id>generate-javadoc-json</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>javadoc-no-fork</goal>
+						</goals>
+						<configuration>
+							<doclet>capital.scalable.restdocs.jsondoclet.ExtractDocumentationAsJsonDoclet</doclet>
+							<docletArtifact>
+								<groupId>capital.scalable</groupId>
+								<artifactId>spring-auto-restdocs-json-doclet</artifactId>
+								<version>2.0.7</version>
+							</docletArtifact>
+							<destDir>generated-javadoc-json</destDir>
+							<reportOutputDirectory>${project.build.directory}</reportOutputDirectory>
+							<useStandardDocletOptions>false</useStandardDocletOptions>
+							<show>package</show>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

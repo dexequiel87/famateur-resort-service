@@ -1,5 +1,8 @@
 package com.degg.famateur.rest.controller;
 
+import capital.scalable.restdocs.AutoDocumentation;
+import capital.scalable.restdocs.jackson.JacksonResultHandlers;
+import capital.scalable.restdocs.response.ResponseModifyingPreprocessors;
 import com.degg.famateur.FamateurApplication;
 import com.degg.famateur.model.Resort;
 import com.degg.famateur.service.ResortService;
@@ -7,10 +10,18 @@ import com.degg.famateur.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.RestDocumentationContextProvider;
+import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.restdocs.cli.CliDocumentation;
+import org.springframework.restdocs.http.HttpDocumentation;
+import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
+import org.springframework.restdocs.operation.preprocess.Preprocessors;
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -26,6 +37,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(ResortController.class)
 @ContextConfiguration(classes = {FamateurApplication.class})
+@AutoConfigureRestDocs(outputDir = "target/generated-snippets")
+@ExtendWith(RestDocumentationExtension.class)
 public class ResortRestTest {
 
     MockMvc mockMvc;
@@ -45,14 +58,36 @@ public class ResortRestTest {
     private String validId;
     private String endpointUrl;
 
-
     @BeforeEach
-    void before() {
+    void before(RestDocumentationContextProvider restDocumentation) {
         validId = "9451d9c51sc1s5d1csd231c";
         endpointUrl = "/api/v1/resorts/";
 
         mockMvc = MockMvcBuilders.webAppContextSetup(context)
                 .apply(SecurityMockMvcConfigurers.springSecurity())
+                .alwaysDo(JacksonResultHandlers.prepareJackson(objectMapper))
+                .alwaysDo(MockMvcRestDocumentation.document("{class-name}/{method-name}",
+                        Preprocessors.preprocessRequest(),
+                        Preprocessors.preprocessResponse(
+                                ResponseModifyingPreprocessors.replaceBinaryContent(),
+                                ResponseModifyingPreprocessors.limitJsonArrayLength(objectMapper),
+                                Preprocessors.prettyPrint())))
+                .apply(MockMvcRestDocumentation.documentationConfiguration(restDocumentation)
+                        .uris()
+                        .withScheme("http")
+                        .withHost("localhost")
+                        .withPort(8080)
+                        .and().snippets()
+                        .withDefaults(CliDocumentation.curlRequest(),
+                                HttpDocumentation.httpRequest(),
+                                HttpDocumentation.httpResponse(),
+                                AutoDocumentation.requestFields(),
+                                AutoDocumentation.responseFields(),
+                                AutoDocumentation.pathParameters(),
+                                AutoDocumentation.requestParameters(),
+                                AutoDocumentation.description(),
+                                AutoDocumentation.methodAndPath(),
+                                AutoDocumentation.section()))
         .build();
     }
 

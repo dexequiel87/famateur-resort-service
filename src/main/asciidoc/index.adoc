@@ -1,0 +1,12 @@
+= Famateur Resorts Service REST API Documentation
+
+This is an example output for a service running at http://localhost:8080:
+
+include::{snippets}/resort-rest-test/get-all/auto-section.adoc[]
+include::{snippets}/resort-rest-test/get-by-id/auto-section.adoc[]
+include::{snippets}/resort-rest-test/create/auto-section.adoc[]
+include::{snippets}/resort-rest-test/update/auto-section.adoc[]
+include::{snippets}/resort-rest-test/test-handle-delete/auto-section.adoc[]
+
+
+As you can see the format is very simple, and in fact you always get the same message.
