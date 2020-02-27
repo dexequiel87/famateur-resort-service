@@ -1,7 +1,7 @@
 package com.degg.famateur.service;
 
 import com.degg.famateur.exception.NoSuchUserException;
-import com.degg.famateur.model.User;
+import com.degg.famateur.domain.User;
 import com.degg.famateur.repository.mongo.UserMongoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;

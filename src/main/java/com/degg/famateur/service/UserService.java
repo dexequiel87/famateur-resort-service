@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 import com.degg.famateur.exception.NoSuchUserException;
-import com.degg.famateur.model.User;
+import com.degg.famateur.domain.User;
 
 public interface UserService extends UserDetailsService{
 

@@ -1,8 +1,10 @@
 package com.degg.famateur.service;
 
 import com.degg.famateur.FamateurApplication;
-import com.degg.famateur.model.Resort;
+import com.degg.famateur.domain.Resort;
 import com.degg.famateur.repository.mongo.ResortMongoRepository;
+import com.degg.famateur.rest.model.ResortDto;
+import com.degg.famateur.service.mapper.ResortMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,6 +18,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -29,11 +32,14 @@ class ResortServiceTest {
     @Autowired
     ResortService resortService;
 
+    @Autowired
+    ResortMapper resortMapper;
+
     @MockBean
     ResortMongoRepository repository;
 
-    Resort savedResort;
-    List<Resort> savedResorts;
+    ResortDto savedResort;
+    List<ResortDto> savedResorts;
 
 
     /**
@@ -41,7 +47,7 @@ class ResortServiceTest {
      */
     @BeforeEach
     void before() {
-        savedResort = Resort.builder()
+        savedResort = ResortDto.builder()
                 .id("23b3o4234boj324b23")
                 .title("Test Saved Resort")
                 .description("This is a test saved resort")
@@ -50,13 +56,13 @@ class ResortServiceTest {
 
         savedResorts = Arrays.asList(
                 savedResort,
-                Resort.builder()
+                ResortDto.builder()
                     .id("23b3o4scsdj324b23")
                     .title("Test Saved Resort 2")
                     .description("This is a second test saved resort")
                     .enabled(Boolean.TRUE)
                     .build(),
-                Resort.builder()
+                ResortDto.builder()
                     .id("23b3o4234sdcd24b23")
                     .title("Test Saved Resort 3")
                     .description("This is a third test saved resort")
@@ -74,14 +80,14 @@ class ResortServiceTest {
     void findAll() {
 
         // Mock respository
-        Mockito.when(repository.findAll()).thenReturn(savedResorts);
+        Mockito.when(repository.findAll()).thenReturn(savedResorts.stream().map(resortDto -> resortMapper.toResort(resortDto)).collect(Collectors.toList()));
 
         // Actual result
-        List<Resort> actualResult = resortService.findAll();
+        List<ResortDto> actualResult = resortService.findAll();
 
         // Assert that resorts returned by the service match savedResorts
         Assertions.assertEquals(savedResorts.size(), actualResult.size());
-        for (Resort resort : actualResult) {
+        for (ResortDto resort : actualResult) {
             assertTrue(objectIsPresent(resort, savedResorts));
         }
     }
@@ -94,7 +100,7 @@ class ResortServiceTest {
      */
     @Test
     void findById() {
-        Mockito.when(repository.findById(any())).thenReturn(Optional.ofNullable(savedResort));
+        Mockito.when(repository.findById(any())).thenReturn(Optional.ofNullable(resortMapper.toResort(savedResort)));
         assertEquals(resortService.findById("32423423sdfwer3f343"), savedResort);
     }
 
@@ -107,10 +113,10 @@ class ResortServiceTest {
     @Test
     void save() {
         // Mock repository return
-        Mockito.when(repository.save(any(Resort.class))).thenReturn(savedResort);
+        Mockito.when(repository.save(any(Resort.class))).thenReturn(resortMapper.toResort(savedResort));
 
         // Create new object to save
-        Resort newResort = Resort.builder()
+        ResortDto newResort = ResortDto.builder()
                 .title("Test Saved Resort")
                 .description("This is a test saved resort")
                 .enabled(Boolean.TRUE)

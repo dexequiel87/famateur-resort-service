@@ -4,7 +4,8 @@ import capital.scalable.restdocs.AutoDocumentation;
 import capital.scalable.restdocs.jackson.JacksonResultHandlers;
 import capital.scalable.restdocs.response.ResponseModifyingPreprocessors;
 import com.degg.famateur.FamateurApplication;
-import com.degg.famateur.model.Resort;
+import com.degg.famateur.domain.Resort;
+import com.degg.famateur.rest.model.ResortDto;
 import com.degg.famateur.service.ResortService;
 import com.degg.famateur.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -91,8 +92,8 @@ public class ResortRestTest {
         .build();
     }
 
-    private Resort getValidResort() {
-        return Resort.builder()
+    private ResortDto getValidResort() {
+        return ResortDto.builder()
                 .id("9451d9c51sc1s5d1csd231c")
                 .title("Mocked Resort 1")
                 .description("Mocked Resort 1 long description")
@@ -126,7 +127,7 @@ public class ResortRestTest {
     @Test
     void create() throws Exception {
 
-        Resort resort = Resort.builder()
+        ResortDto resort = ResortDto.builder()
                 .title("Test Resort 1")
                 .description("Test Resort 1 long description")
                 .enabled(Boolean.TRUE)
@@ -144,7 +145,7 @@ public class ResortRestTest {
     @Test
     void badRequestCreate() throws Exception {
 
-        Resort resort = Resort.builder()
+        ResortDto resort = ResortDto.builder()
                 .id("9451d9c51sc1s5d1csd231c")
                 .title("Test Resort 1")
                 .description("Test Resort 1 long description")
@@ -162,7 +163,7 @@ public class ResortRestTest {
     @Test
     void badRequestUpdate() throws Exception {
 
-        Resort resort = Resort.builder()
+        ResortDto resort = ResortDto.builder()
                 .id("9451d9c51sc1s5d1csd231c")
                 .title("Test Resort 1")
                 .description("Test Resort 1 long description")
@@ -180,7 +181,7 @@ public class ResortRestTest {
     @Test
     void update() throws Exception {
 
-        Resort resort = Resort.builder()
+        ResortDto resort = ResortDto.builder()
                 .id("9451d9c51sc1s5d1csd231c")
                 .title("Test Resort 1")
                 .description("Test Resort 1 long description")
