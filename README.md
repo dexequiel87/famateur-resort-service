@@ -33,10 +33,6 @@ I will keep this project public for sharing knowledge and as a sample of my skil
 * Install and run `java -jar ./target/famateur-services-0.0.1-SNAPSHOT.jar `
 * Find the API documentation at http://localhost:8090/api-docs
  
-```
-code blocks for commands
-```
-
 ## Author
 
 [Damián García](https://github.com/dexequiel87/)
