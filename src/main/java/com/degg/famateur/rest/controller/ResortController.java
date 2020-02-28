@@ -1,6 +1,7 @@
 package com.degg.famateur.rest.controller;
 
-import com.degg.famateur.model.Resort;
+import com.degg.famateur.domain.Resort;
+import com.degg.famateur.rest.model.ResortDto;
 import com.degg.famateur.service.ResortService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -24,7 +25,7 @@ public class ResortController {
     @ApiOperation(value = "Search for existing Resorts",
         notes = "Pagination will be added soon.",
         response = Resort.class)
-    public ResponseEntity<List<Resort>> getList() {
+    public ResponseEntity<List<ResortDto>> getList() {
         return new ResponseEntity<>(service.findAll(), HttpStatus.OK);
     }
 
@@ -33,7 +34,7 @@ public class ResortController {
     @ApiOperation(value = "Find a Resort by id",
             notes = "Provide the id of the desired Resort.",
             response = Resort.class)
-    public ResponseEntity<Resort> get(
+    public ResponseEntity<ResortDto> get(
             @ApiParam(value = "ID of the Resort you need to retrieve", required = true)
             @PathVariable("id") String id) {
         return new ResponseEntity<>(service.findById(id), HttpStatus.OK);
@@ -44,7 +45,7 @@ public class ResortController {
     @ApiOperation(value = "Create a new Resort",
             notes = "Provide data for the new Resort.",
             response = Resort.class)
-    public ResponseEntity<Resort> create(@Valid @RequestBody Resort resort) {
+    public ResponseEntity<ResortDto> create(@Valid @RequestBody ResortDto resort) {
         return new ResponseEntity<>(service.save(resort), HttpStatus.CREATED);
     }
 
@@ -52,10 +53,10 @@ public class ResortController {
     @PutMapping("/{id}")
     @ApiOperation(value = "Update a Resort",
             notes = "Provide the id of the Resort to update and updated data.",
-            response = Resort.class)
-    public ResponseEntity<Resort> update(
+            response = ResortDto.class)
+    public ResponseEntity<ResortDto> update(
             @ApiParam(value = "ID of the Resort you need to update", required = true)
-            @Valid @PathVariable("id") String id, @RequestBody Resort resort) {
+            @Valid @PathVariable("id") String id, @RequestBody ResortDto resort) {
         return new ResponseEntity<>(service.save(resort), HttpStatus.OK);
     }
 

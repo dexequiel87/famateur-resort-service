@@ -1,7 +1,8 @@
 package com.degg.famateur.service;
 
 import com.degg.famateur.exception.ResortNotFoundException;
-import com.degg.famateur.model.Resort;
+import com.degg.famateur.domain.Resort;
+import com.degg.famateur.rest.model.ResortDto;
 
 import java.util.List;
 
@@ -12,7 +13,7 @@ public interface ResortService {
      *
      * @return a list of Resort
      */
-    List<Resort> findAll();
+    List<ResortDto> findAll();
 
 
     /**
@@ -21,7 +22,7 @@ public interface ResortService {
      * @param id the id of the Resort
      * @return a Resort for the specified id
      */
-    Resort findById(String id);
+    ResortDto findById(String id);
 
 
     /**
@@ -30,7 +31,7 @@ public interface ResortService {
      * @param resort the Resort to be saved
      * @return the Resort saved with its corresponding id
      */
-    Resort save(Resort resort);
+    ResortDto save(ResortDto resort);
 
 
     /**
@@ -40,7 +41,7 @@ public interface ResortService {
      * @param resort the updated Resort
      * @return the Resort saved with its corresponding id
      */
-    Resort save(String id, Resort resort);
+    ResortDto save(String id, ResortDto resort);
 
 
     /**
@@ -48,7 +49,7 @@ public interface ResortService {
      *
      * @param resort the resort to delete
      */
-    void delete(Resort resort);
+    void delete(ResortDto resort);
 
 
     /**

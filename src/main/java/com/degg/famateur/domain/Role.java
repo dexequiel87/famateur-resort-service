@@ -1,4 +1,4 @@
-package com.degg.famateur.model;
+package com.degg.famateur.domain;
 
 import java.util.List;
 
