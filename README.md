@@ -15,7 +15,7 @@ I will keep this project public for sharing knowledge and as a sample of my skil
 
 ### Dependencies
 
-* Java 8+
+* Java 11+
 * Maven
 * MongoDB
 
@@ -39,7 +39,7 @@ I will keep this project public for sharing knowledge and as a sample of my skil
 
 Java & Javascript software engineer since 2012
 
-Find me in [LinkedIn](https://www.linkedin.com/in/dexequielgarcia/)!
+Find more about my experience in [LinkedIn](https://www.linkedin.com/in/dexequielgarcia/)!
 
 ## Version History
 

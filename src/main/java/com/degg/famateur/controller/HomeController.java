@@ -6,8 +6,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class HomeController {
 
+    public static final String DOCS_INDEX_HTML = "docs/index.html";
+
     @GetMapping("/api-docs")
     public String getApiDocs() {
-        return "forward:docs/index.html";
+        return DOCS_INDEX_HTML;
     }
 }

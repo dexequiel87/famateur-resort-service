@@ -12,13 +12,14 @@
 	<artifactId>famateur-services</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>api</name>
-	<description>Demo project for Spring Boot</description>
+	<description>Spring Boot Microservices for Resorts management</description>
 
 	<properties>
-		<java.version>1.8</java.version>
+		<java.version>8</java.version>
 		<project.build.sorceEncoding>UTF-8</project.build.sorceEncoding>
-		<maven.compiler.target>1.8</maven.compiler.target>
-		<maven.compiler.source>1.8</maven.compiler.source>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<maven.compiler.target>${java.version}</maven.compiler.target>
+		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
 		<springframework.version>5.0.2.RELEASE</springframework.version>
 		<springsecurity.version>5.0.0.RELEASE</springsecurity.version>
@@ -27,7 +28,7 @@
 	</properties>
 
 	<dependencies>
-	
+
 		<!-- Spring MVC support -->
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -114,7 +115,7 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
-		
+
 		<!-- https://mvnrepository.com/artifact/org.springframework.security.oauth/spring-security-oauth2 -->
 		<dependency>
 		    <groupId>org.springframework.security.oauth</groupId>
