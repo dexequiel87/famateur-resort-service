@@ -8,7 +8,7 @@ public class HomeController {
 
     public static final String DOCS_INDEX_HTML = "docs/index.html";
 
-    @GetMapping("/api-docs")
+    @GetMapping("/")
     public String getApiDocs() {
         return DOCS_INDEX_HTML;
     }
