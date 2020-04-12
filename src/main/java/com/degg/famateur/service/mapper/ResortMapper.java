@@ -4,7 +4,7 @@ import com.degg.famateur.domain.Resort;
 import com.degg.famateur.rest.model.ResortDto;
 import org.mapstruct.Mapper;
 
-@Mapper
+@Mapper(uses = {AddressMapper.class})
 public interface ResortMapper {
 
     /**
