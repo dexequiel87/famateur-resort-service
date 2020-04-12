@@ -4,6 +4,7 @@ import com.degg.famateur.exception.ResortNotFoundException;
 import com.degg.famateur.domain.Resort;
 import com.degg.famateur.repository.mongo.ResortMongoRepository;
 import com.degg.famateur.rest.model.ResortDto;
+import com.degg.famateur.service.mapper.AddressMapper;
 import com.degg.famateur.service.mapper.ResortMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,8 @@ public class ResortServiceImpl implements ResortService {
 
     @Autowired
     private ResortMapper resortMapper;
+    @Autowired
+    private AddressMapper addressMapper;
 
     public ResortServiceImpl(ResortMongoRepository repository) {
         this.repository = repository;
@@ -70,9 +73,10 @@ public class ResortServiceImpl implements ResortService {
     public ResortDto save(String id, ResortDto resort) {
         Resort storedResort = repository.findById(id).orElse(resortMapper.toResort(resort));
         storedResort.setId(id);
-        storedResort.setDescription(resort.getDescription());
-        storedResort.setEnabled(resort.getEnabled());
-        storedResort.setTitle(resort.getTitle());
+        if (resort.getDescription() != null) storedResort.setDescription(resort.getDescription());
+        if (resort.getEnabled() != null) storedResort.setEnabled(resort.getEnabled());
+        if (resort.getTitle() != null) storedResort.setTitle(resort.getTitle());
+        if (resort.getAddress() != null) storedResort.setAddress(addressMapper.toAddress(resort.getAddress()));
         return resortMapper.toResortDto(repository.save(storedResort));
     }
 

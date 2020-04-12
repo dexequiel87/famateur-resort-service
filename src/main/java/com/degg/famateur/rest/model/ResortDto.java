@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 
 @Data
 @NoArgsConstructor
@@ -19,4 +21,8 @@ public class ResortDto {
     private String description;
 
     private Boolean enabled;
+
+    private AddressDto address;
+
+    private List<String> images;
 }

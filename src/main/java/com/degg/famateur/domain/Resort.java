@@ -4,6 +4,7 @@ import lombok.*;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.*;
+import java.util.List;
 
 
 @Data
@@ -17,12 +18,13 @@ public class Resort {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private String id;
 
-    @Column
     private String title;
 
-    @Column
     private String description;
 
-    @Column
     private Boolean enabled;
+
+    private Address address;
+
+    private List<String> images;
 }
