@@ -4,7 +4,6 @@ import capital.scalable.restdocs.AutoDocumentation;
 import capital.scalable.restdocs.jackson.JacksonResultHandlers;
 import capital.scalable.restdocs.response.ResponseModifyingPreprocessors;
 import com.degg.famateur.FamateurApplication;
-import com.degg.famateur.domain.Resort;
 import com.degg.famateur.rest.model.ResortDto;
 import com.degg.famateur.service.ResortService;
 import com.degg.famateur.service.UserService;
@@ -60,7 +59,7 @@ public class ResortRestTest {
     private String endpointUrl;
 
     @BeforeEach
-    void before(RestDocumentationContextProvider restDocumentation) {
+    void setup(RestDocumentationContextProvider restDocumentation) {
         validId = "9451d9c51sc1s5d1csd231c";
         endpointUrl = "/api/v1/resorts/";
 
@@ -93,20 +92,13 @@ public class ResortRestTest {
     }
 
     private ResortDto getValidResort() {
-        return ResortDto.builder()
-                .id("9451d9c51sc1s5d1csd231c")
-                .title("Mocked Resort 1")
-                .description("Mocked Resort 1 long description")
-                .enabled(Boolean.TRUE)
-                .build();
+        return mockResort("Mocked Resort 1", "Mocked Resort 1 long description");
     }
 
     @Test
-    void getAll() throws Exception {
-        // Mock repository
+    void returnJsonContainingAllResortsUponRequest() throws Exception {
         given(service.findAll()).willReturn(Arrays.asList(getValidResort()));
 
-        // Simulate HTTP Request
         mockMvc.perform(get(endpointUrl)
                 .param("pageSize", "20")
                 .accept(MediaType.APPLICATION_JSON))
@@ -127,11 +119,7 @@ public class ResortRestTest {
     @Test
     void create() throws Exception {
 
-        ResortDto resort = ResortDto.builder()
-                .title("Test Resort 1")
-                .description("Test Resort 1 long description")
-                .enabled(Boolean.TRUE)
-                .build();
+        ResortDto resort = mockResort("Test Resort 1", "Test Resort 1 long description");
         String resortJson = objectMapper.writeValueAsString(resort);
 
         given(service.save(any())).willReturn(getValidResort());
@@ -145,12 +133,7 @@ public class ResortRestTest {
     @Test
     void badRequestCreate() throws Exception {
 
-        ResortDto resort = ResortDto.builder()
-                .id("9451d9c51sc1s5d1csd231c")
-                .title("Test Resort 1")
-                .description("Test Resort 1 long description")
-                .enabled(Boolean.TRUE)
-                .build();
+        ResortDto resort = mockResort("Test Resort 1", "Test Resort 1 long description");
         String beerDtoJson = objectMapper.writeValueAsString(resort);
 
         given(service.save(any())).willReturn(getValidResort());
@@ -163,12 +146,7 @@ public class ResortRestTest {
     @Test
     void badRequestUpdate() throws Exception {
 
-        ResortDto resort = ResortDto.builder()
-                .id("9451d9c51sc1s5d1csd231c")
-                .title("Test Resort 1")
-                .description("Test Resort 1 long description")
-                .enabled(Boolean.TRUE)
-                .build();
+        ResortDto resort = mockResort("Test Resort 1", "Test Resort 1 long description");
         String resortJson = objectMapper.writeValueAsString(resort);
 
         given(service.save(any())).willReturn(getValidResort());
@@ -181,12 +159,7 @@ public class ResortRestTest {
     @Test
     void update() throws Exception {
 
-        ResortDto resort = ResortDto.builder()
-                .id("9451d9c51sc1s5d1csd231c")
-                .title("Test Resort 1")
-                .description("Test Resort 1 long description")
-                .enabled(Boolean.TRUE)
-                .build();
+        ResortDto resort = mockResort("Test Resort 1", "Test Resort 1 long description");
         String resortJson = objectMapper.writeValueAsString(resort);
 
         given(service.save(any())).willReturn(getValidResort());
@@ -195,6 +168,15 @@ public class ResortRestTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(resortJson))
                 .andExpect(status().isOk());
+    }
+
+    private ResortDto mockResort(String s, String s2) {
+        return ResortDto.builder()
+                .id("9451d9c51sc1s5d1csd231c")
+                .title(s)
+                .description(s2)
+                .enabled(Boolean.TRUE)
+                .build();
     }
 
     @Test

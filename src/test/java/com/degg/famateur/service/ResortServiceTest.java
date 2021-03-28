@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {FamateurApplication.class})
@@ -38,15 +38,15 @@ class ResortServiceTest {
     @MockBean
     ResortMongoRepository repository;
 
-    ResortDto savedResort;
-    List<ResortDto> savedResorts;
+    private ResortDto savedResort;
+    private List<ResortDto> savedResorts;
+    private List<ResortDto> resorts;
+    private ResortDto actualResort;
+    private ResortDto newResortDto;
+    private String resortId;
 
-
-    /**
-     * Execute this method before each test
-     */
     @BeforeEach
-    void before() {
+    void setup() {
         savedResort = ResortDto.builder()
                 .id("23b3o4234boj324b23")
                 .title("Test Saved Resort")
@@ -54,116 +54,143 @@ class ResortServiceTest {
                 .enabled(Boolean.TRUE)
                 .build();
 
-        savedResorts = Arrays.asList(
-                savedResort,
-                ResortDto.builder()
-                    .id("23b3o4scsdj324b23")
-                    .title("Test Saved Resort 2")
-                    .description("This is a second test saved resort")
-                    .enabled(Boolean.TRUE)
-                    .build(),
-                ResortDto.builder()
-                    .id("23b3o4234sdcd24b23")
-                    .title("Test Saved Resort 3")
-                    .description("This is a third test saved resort")
-                    .enabled(Boolean.FALSE)
-                    .build());
-    }
-
-
-
-
-    /**
-     * Test the findAll() method of ResortService
-     */
-    @Test
-    void findAll() {
-
-        // Mock respository
-        Mockito.when(repository.findAll()).thenReturn(savedResorts.stream().map(resortDto -> resortMapper.toResort(resortDto)).collect(Collectors.toList()));
-
-        // Actual result
-        List<ResortDto> actualResult = resortService.findAll();
-
-        // Assert that resorts returned by the service match savedResorts
-        Assertions.assertEquals(savedResorts.size(), actualResult.size());
-        for (ResortDto resort : actualResult) {
-            assertTrue(objectIsPresent(resort, savedResorts));
-        }
-    }
-
-
-
-
-    /**
-     * Test the findById() method of ResortService
-     */
-    @Test
-    void findById() {
-        Mockito.when(repository.findById(any())).thenReturn(Optional.ofNullable(resortMapper.toResort(savedResort)));
-        assertEquals(resortService.findById("32423423sdfwer3f343"), savedResort);
-    }
-
-
-
-
-    /**
-     * Test the save() method of ResortService
-     */
-    @Test
-    void save() {
-        // Mock repository return
-        Mockito.when(repository.save(any(Resort.class))).thenReturn(resortMapper.toResort(savedResort));
-
-        // Create new object to save
-        ResortDto newResort = ResortDto.builder()
-                .title("Test Saved Resort")
-                .description("This is a test saved resort")
+        ResortDto savedResort2 = ResortDto.builder()
+                .id("23b3o4scsdj324b23")
+                .title("Test Saved Resort 2")
+                .description("This is a second test saved resort")
                 .enabled(Boolean.TRUE)
                 .build();
-
-        // Asserts
-        assertEquals(savedResort, resortService.save(newResort));
+        ResortDto resort3 = ResortDto.builder()
+                .id("23b3o4234sdcd24b23")
+                .title("Test Saved Resort 3")
+                .description("This is a third test saved resort")
+                .enabled(Boolean.FALSE)
+                .build();
+        savedResorts = Arrays.asList(
+                savedResort,
+                savedResort2,
+                resort3);
+        doNothing().when(repository).delete(any());
+        doNothing().when(repository).deleteById(any());
     }
 
 
 
 
-    /**
-     * Test the delete() method of ResortService
-     */
     @Test
-    void delete() {
-        // Mock repository
-        doNothing().when(repository).delete(any());
+    void return_All_Resorts_Upon_Request() {
+        givenSomeResorts();
+        whenAllResortsAreRequested();
+        thenAllResortsAreReturned();
+    }
 
-        // Call method
+    @Test
+    void returnASpecificResortUponRequest() {
+        givenAResort();
+        whenAResortIsRequested();
+        thenExpectedResortIsReturned();
+    }
+
+    @Test
+    void saveANewResortUponRequest() {
+        Resort newResort = givenANewResort();
+        givenAResortRepository(newResort);
+        whenAResortIsSaved();
+        thenResortIsSavedToTheRepository(newResort);
+        thenReturnsTheSavedResort();
+    }
+
+    @Test
+    void deleteResortUponRequest() {
+        whenResortRemovalIsRequested();
+        thenResortIsRemovedFromRepository();
+    }
+
+    @Test
+    void deleteResortByIdUponRequest() {
+        whenRemovalByIdIsRequested();
+        thenResortIdIsRemovedFromRepository();
+    }
+
+    private void givenSomeResorts() {
+        Mockito.when(repository.findAll())
+                .thenReturn(savedResorts.stream().map(resortDto -> resortMapper.toResort(resortDto)).collect(Collectors.toList()));
+    }
+
+
+    private void givenAResort() {
+        Mockito.when(repository.findById(any()))
+                .thenReturn(Optional.ofNullable(resortMapper.toResort(savedResort)));
+    }
+
+
+    private void givenAResortRepository(Resort newResort) {
+        Mockito.when(repository.save(newResort))
+                .thenReturn(resortMapper.toResort(savedResort));
+    }
+
+    private Resort givenANewResort() {
+        newResortDto = ResortDto.builder()
+            .title("Test Saved Resort")
+            .description("This is a test saved resort")
+            .enabled(Boolean.TRUE)
+            .build();
+        Resort newResort = resortMapper.toResort(newResortDto);
+        return newResort;
+    }
+
+
+    private void whenAllResortsAreRequested() {
+        resorts = resortService.findAll();
+    }
+
+    private void whenAResortIsRequested() {
+        actualResort = resortService.findById("32423423sdfwer3f343");
+    }
+
+    private void whenAResortIsSaved() {
+        actualResort = resortService.save(newResortDto);
+    }
+
+    private void whenResortRemovalIsRequested() {
         resortService.delete(savedResort);
     }
 
 
-
-    /**
-     * Test the deleteById() method of ResortService
-     */
-    @Test
-    void deleteById() {
-        // Mock repository
-        doNothing().when(repository).deleteById(any());
-
-        // Call method
-        resortService.deleteById("e23e32e23d2323ed23");
+    private void whenRemovalByIdIsRequested() {
+        resortId = "e23e32e23d2323ed23";
+        resortService.deleteById(resortId);
     }
 
 
+    private void thenAllResortsAreReturned() {
+        Assertions.assertEquals(savedResorts.size(), resorts.size());
+        for (ResortDto resort : resorts) {
+            assertTrue(objectIsPresentInList(resort, savedResorts));
+        }
+    }
 
-    /**
-     * Check if a List contains an object exactly like the given object
-     * @param object the object to verify
-     * @param list the list
-     * @return true if the list contains an object with the same attributes that the object given or false otherwise
-     */
-    private boolean objectIsPresent(Object object, List list) {
+    private void thenResortIsSavedToTheRepository(Resort newResort) {
+        verify(repository, times(1)).save(newResort);
+    }
+
+    private void thenReturnsTheSavedResort() {
+        assertEquals(savedResort, actualResort);
+    }
+
+    private void thenExpectedResortIsReturned() {
+        assertEquals(actualResort, savedResort);
+    }
+
+    private void thenResortIsRemovedFromRepository() {
+        verify(repository, times(1)).delete(resortMapper.toResort(savedResort));
+    }
+
+    private void thenResortIdIsRemovedFromRepository() {
+        verify(repository, times(1)).deleteById(resortId);
+    }
+
+    private boolean objectIsPresentInList(Object object, List list) {
         for (Object resortI : list) {
             if (resortI.equals(object))
                 return Boolean.TRUE;
