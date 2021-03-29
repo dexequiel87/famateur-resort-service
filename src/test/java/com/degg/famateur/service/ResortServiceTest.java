@@ -105,7 +105,6 @@ class ResortServiceTest {
         whenResortRemovalIsRequested();
         thenResortIsRemovedFromRepository();
     }
-
     @Test
     void deleteResortByIdUponRequest() {
         whenRemovalByIdIsRequested();
@@ -135,8 +134,7 @@ class ResortServiceTest {
             .description("This is a test saved resort")
             .enabled(Boolean.TRUE)
             .build();
-        Resort newResort = resortMapper.toResort(newResortDto);
-        return newResort;
+        return resortMapper.toResort(newResortDto);
     }
 
 
@@ -191,10 +189,6 @@ class ResortServiceTest {
     }
 
     private boolean objectIsPresentInList(Object object, List list) {
-        for (Object resortI : list) {
-            if (resortI.equals(object))
-                return Boolean.TRUE;
-        }
-        return Boolean.FALSE;
+        return list.stream().anyMatch(o -> o.equals(object));
     }
 }

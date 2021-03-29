@@ -1,18 +1,15 @@
-package com.degg.famateur.rest.model;
+package com.degg.famateur.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ResortDto {
+public class BookableAsset {
 
     private String id;
 
@@ -20,11 +17,7 @@ public class ResortDto {
 
     private String description;
 
-    private Boolean enabled;
+    private String calendarType;
 
-    private AddressDto address;
-
-    private List<String> images;
-
-    private List<BookableAssetDto> bookableAssets;
+    private String calendarId;
 }

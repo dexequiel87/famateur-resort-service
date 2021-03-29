@@ -27,4 +27,6 @@ public class Resort {
     private Address address;
 
     private List<String> images;
+
+    private List<BookableAsset> bookableAssets;
 }
