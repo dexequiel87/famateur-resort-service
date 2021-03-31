@@ -56,7 +56,7 @@ public class ResortController {
             response = ResortDto.class)
     public ResponseEntity<ResortDto> update(
             @ApiParam(value = "ID of the Resort you need to update", required = true)
-            @Valid @PathVariable("id") String id, @RequestBody ResortDto resort) {
+            @Valid @PathVariable("id") String id, @Valid @RequestBody ResortDto resort) {
         return new ResponseEntity<>(service.save(id, resort), HttpStatus.OK);
     }
 

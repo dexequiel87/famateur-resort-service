@@ -93,7 +93,7 @@ public class ResortRestTest {
 
     @Test
     void badRequestCreate() throws Exception {
-        ResortDto resort = mockResort("Test Resort 1", "Test Resort 1 long description");
+        ResortDto resort = mockResort("", "Test Resort 1 long description");
         String resortDto = objectMapper.writeValueAsString(resort);
         given(service.save(any())).willReturn(getValidResort());
         mockMvc.perform(post(endpointUrl)
@@ -104,7 +104,7 @@ public class ResortRestTest {
 
     @Test
     void badRequestUpdate() throws Exception {
-        ResortDto resort = mockResort("Test Resort 1", "Test Resort 1 long description");
+        ResortDto resort = mockResort("", "Test Resort 1 long description");
         String resortJson = objectMapper.writeValueAsString(resort);
         given(service.save(any())).willReturn(getValidResort());
         mockMvc.perform(put(endpointUrl + validId)

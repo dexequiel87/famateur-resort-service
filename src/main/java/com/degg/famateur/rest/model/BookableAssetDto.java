@@ -16,7 +16,7 @@ public class BookableAssetDto {
 
     private String id;
 
-    @Length(min = 1)
+    @Length(min = 1, max = 30)
     private String title;
 
     private String description;
