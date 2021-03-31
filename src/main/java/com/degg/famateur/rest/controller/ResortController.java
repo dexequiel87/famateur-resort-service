@@ -25,7 +25,7 @@ public class ResortController {
     @ApiOperation(value = "Search for existing Resorts",
         notes = "Pagination will be added soon.",
         response = Resort.class)
-    public ResponseEntity<List<ResortDto>> getList() {
+    public ResponseEntity<List<ResortDto>> list() {
         return new ResponseEntity<>(service.findAll(), HttpStatus.OK);
     }
 

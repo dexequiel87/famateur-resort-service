@@ -8,9 +8,11 @@ public interface BookableAssetService {
 
     List<BookableAssetDto> findAllAssetsByResortId(String resortId);
 
-    void addBookableAssetToResort(String resortId, BookableAssetDto bookableAssetDto);
+    BookableAssetDto addBookableAssetToResort(String resortId, BookableAssetDto bookableAssetDto);
 
-    void updateBookableAsset(String resortId, String assetId, BookableAssetDto bookableAssetDto);
+    BookableAssetDto updateBookableAsset(String resortId, String assetId, BookableAssetDto bookableAssetDto);
 
     void deleteBookableAsset(String resortId, String bookablessetId);
+
+    BookableAssetDto findBookableAssetByResortIdAndBookableAssetId(String resortId, String nonExistingAssetId);
 }

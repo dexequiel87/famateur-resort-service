@@ -9,11 +9,22 @@ used as a REST client. You can find it link:swagger-ui.html[here].
 Resorts represent physical business that provide one or more services, such as haircuts, yoga classes or soccer fields.
 Those services can be booked by customers for a limited time interval.
 
-include::{snippets}/resort-rest-test/get-all/auto-section.adoc[]
+include::{snippets}/resort-rest-test/list/auto-section.adoc[]
 include::{snippets}/resort-rest-test/get-by-id/auto-section.adoc[]
 include::{snippets}/resort-rest-test/create/auto-section.adoc[]
 include::{snippets}/resort-rest-test/update/auto-section.adoc[]
-include::{snippets}/resort-rest-test/test-handle-delete/auto-section.adoc[]
+include::{snippets}/resort-rest-test/delete/auto-section.adoc[]
 
-by https://github.com/dexequiel87/[Damián García]
+## Bookable Assets
+
+Bookable Assets represent professionals or physical things that can be booked by customers for a limited time interval,
+such as hairdressers or soccer fields.
+
+include::{snippets}/bookable-asset-rest-test/list/auto-section.adoc[]
+include::{snippets}/bookable-asset-rest-test/get-by-id/auto-section.adoc[]
+include::{snippets}/bookable-asset-rest-test/create/auto-section.adoc[]
+include::{snippets}/bookable-asset-rest-test/update/auto-section.adoc[]
+include::{snippets}/bookable-asset-rest-test/delete/auto-section.adoc[]
+
+by https://github.com/thegaux/[Damián García]
 

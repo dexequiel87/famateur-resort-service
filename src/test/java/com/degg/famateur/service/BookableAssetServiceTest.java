@@ -21,8 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
@@ -38,18 +37,20 @@ public class BookableAssetServiceTest {
     @Autowired
     ResortMapper resortMapper;
 
+    private static final String GOOGLE_CALENDAR = "google-calendar";
+    private static final String RESORT_ID = "sdcsdc651sdc651sd";
+    private static final String ASSET_TITLE = "title";
+    private static final String ASSET_DESCRIPTION = "description";
+    private static final String NON_EXISTING_ASSET_ID = "sdcsdcsdcds";
+    private static final String EXISTING_ASSET_ID = "00001";
+    private static final String CALENDAR_ID = "sd51c6sd5c1s3d2c1sd";
     private List<BookableAssetDto> actualBookableAssets;
-    private String resortId = "sdcsdc651sdc651sd";
     private List<BookableAssetDto> expectedBookableAssets;
     private ResortDto resortDto;
     private Resort resort;
-    private String assetTitle = "title";
-    private String assetDescription = "description";
     private BookableAssetDto bookableAssetDto;
-    private String calendarType;
-    private String calendarId;
-    private String nonExistingAssetId = "sdcsdcsdcds";
-    private String existingAssetId = "00001";
+    private BookableAssetDto actualBookableAssetDto;
+    private BookableAssetDto bookableAssetDto1;
 
     @BeforeEach
     void setup() {
@@ -62,22 +63,26 @@ public class BookableAssetServiceTest {
                 .bookableAssets(expectedBookableAssets)
                 .build();
 
-        calendarType = "google-calendar";
-        calendarId = "sd51c6sd5c1s3d2c1sd";
         bookableAssetDto = BookableAssetDto.builder()
-                .title(assetTitle)
-                .description(assetDescription)
-                .calendarType(calendarType)
-                .calendarId(calendarId)
+                .title(ASSET_TITLE)
+                .description(ASSET_DESCRIPTION)
+                .calendarType(GOOGLE_CALENDAR)
+                .calendarId(CALENDAR_ID)
                 .build();
         resort = resortMapper.toResort(resortDto);
     }
 
     @Test
+    void throwResortNotFoundExceptionWhenFetchingAssetsForNonExistingResort() {
+        givenANonExistingResortId();
+        assertThrows(ResortNotFoundException.class, () -> service.findAllAssetsByResortId(RESORT_ID));
+    }
+
+    @Test
     void returnAllBookableAssetsForAGivenResort() {
         givenAnExistingResort();
-        actualBookableAssets = service.findAllAssetsByResortId(resortId);
-        verify(repository, times(1)).findById(resortId);
+        actualBookableAssets = service.findAllAssetsByResortId(RESORT_ID);
+        verify(repository, times(1)).findById(RESORT_ID);
         Assertions.assertEquals(expectedBookableAssets.size(), actualBookableAssets.size());
         for (BookableAssetDto asset : expectedBookableAssets) {
             assertTrue(objectIsPresentInList(asset, actualBookableAssets));
@@ -85,9 +90,28 @@ public class BookableAssetServiceTest {
     }
 
     @Test
-    void throwResortNotFoundExceptionWhenFetchingAssetsForNonExistingResort() {
+    void throwResortNotFoundExceptionWhenFetchingAssetForNonExistingResort() {
         givenANonExistingResortId();
-        assertThrows(ResortNotFoundException.class, () -> service.findAllAssetsByResortId(resortId));
+        assertThrows(ResortNotFoundException.class,
+                () -> whenBookableAssetIsRequested(EXISTING_ASSET_ID));
+    }
+
+    @Test
+    void throwBookableAssetNotFoundExceptionWhenFetchingANonExistingId() {
+        givenAnExistingResort();
+        assertThrows(BookableAssetNotFoundException.class,
+                () -> whenBookableAssetIsRequested(NON_EXISTING_ASSET_ID));
+    }
+
+    @Test
+    void findBookableAssetByResortIdAndBookableAssetId() {
+        givenAnExistingResort();
+        whenBookableAssetIsRequested(EXISTING_ASSET_ID);
+        assertEquals(bookableAssetDto1, actualBookableAssetDto);
+    }
+
+    private void whenBookableAssetIsRequested(String assetId) {
+        actualBookableAssetDto = service.findBookableAssetByResortIdAndBookableAssetId(RESORT_ID, assetId);
     }
 
     @Test
@@ -107,13 +131,13 @@ public class BookableAssetServiceTest {
     @Test
     void throwResortNotFoundExceptionWhenUpdatingAssetOfNonExistingResort() {
         givenANonExistingResortId();
-        assertThrows(ResortNotFoundException.class, () -> service.updateBookableAsset(resortId, nonExistingAssetId, bookableAssetDto));
+        assertThrows(ResortNotFoundException.class, () -> service.updateBookableAsset(RESORT_ID, NON_EXISTING_ASSET_ID, bookableAssetDto));
     }
 
     @Test
     void throwResortNotFoundExceptionWhenUpdatingNonExistingAsset() {
         givenAnExistingResort();
-        assertThrows(BookableAssetNotFoundException.class, () -> service.updateBookableAsset(resortId, nonExistingAssetId, bookableAssetDto));
+        assertThrows(BookableAssetNotFoundException.class, () -> service.updateBookableAsset(RESORT_ID, NON_EXISTING_ASSET_ID, bookableAssetDto));
     }
 
     @Test
@@ -127,13 +151,13 @@ public class BookableAssetServiceTest {
     @Test
     void throwResortNotFoundExceptionWhenDeletingAssetOfNonExistingResort() {
         givenANonExistingResortId();
-        assertThrows(ResortNotFoundException.class, () -> service.deleteBookableAsset(resortId, nonExistingAssetId));
+        assertThrows(ResortNotFoundException.class, () -> service.deleteBookableAsset(RESORT_ID, NON_EXISTING_ASSET_ID));
     }
 
     @Test
     void throwResortNotFoundExceptionWhenDeletingNonExistingAsset() {
         givenAnExistingResort();
-        assertThrows(BookableAssetNotFoundException.class, () -> service.deleteBookableAsset(resortId, nonExistingAssetId));
+        assertThrows(BookableAssetNotFoundException.class, () -> service.deleteBookableAsset(RESORT_ID, NON_EXISTING_ASSET_ID));
     }
 
     @Test
@@ -144,13 +168,17 @@ public class BookableAssetServiceTest {
     }
 
     private void setupExpectedBookableAssets() {
-        BookableAssetDto bookableAssetDto1 = BookableAssetDto.builder()
-                .id(existingAssetId)
+        bookableAssetDto1 = BookableAssetDto.builder()
+                .id(EXISTING_ASSET_ID)
+                .calendarType(GOOGLE_CALENDAR)
+                .calendarId("00001")
                 .title("Bookable Asset 1 Title")
                 .description("Bookable Asset 1 description")
                 .build();
         BookableAssetDto bookableAssetDto2 = BookableAssetDto.builder()
                 .id("00002")
+                .calendarType(GOOGLE_CALENDAR)
+                .calendarId("00002")
                 .title("Bookable Asset 2 Title")
                 .description("Bookable Asset 2 description")
                 .build();
@@ -158,19 +186,19 @@ public class BookableAssetServiceTest {
     }
 
     private void givenAnExistingResort() {
-        when(repository.findById(resortId)).thenReturn(Optional.ofNullable(resort));
+        when(repository.findById(RESORT_ID)).thenReturn(Optional.ofNullable(resort));
     }
 
     private void givenANonExistingResortId() {
-        when(repository.findById(resortId)).thenReturn(Optional.empty());
+        when(repository.findById(RESORT_ID)).thenReturn(Optional.empty());
     }
 
     private void whenABookableAssetIsAddedToAResort() {
-        service.addBookableAssetToResort(resortId, bookableAssetDto);
+        service.addBookableAssetToResort(RESORT_ID, bookableAssetDto);
     }
 
     private void whenABookableAssetIsUpdated() {
-        service.updateBookableAsset(resortId, existingAssetId, bookableAssetDto);
+        service.updateBookableAsset(RESORT_ID, EXISTING_ASSET_ID, bookableAssetDto);
     }
 
     private void thenResortIsSavedIncludingTheNewAsset(int initialAssets) {
@@ -178,10 +206,10 @@ public class BookableAssetServiceTest {
                 r -> r.getBookableAssets().size() == initialAssets + 1
                             && r.getBookableAssets().stream().anyMatch(a ->
                                 !a.getId().isEmpty()
-                                    && a.getCalendarType().equals(calendarType)
-                                    && a.getCalendarId().equals(calendarId)
-                                    && a.getDescription().equals(assetDescription)
-                                    && a.getTitle().equals(assetTitle))
+                                    && a.getCalendarType().equals(GOOGLE_CALENDAR)
+                                    && a.getCalendarId().equals(CALENDAR_ID)
+                                    && a.getDescription().equals(ASSET_DESCRIPTION)
+                                    && a.getTitle().equals(ASSET_TITLE))
                 ));
     }
 
@@ -189,19 +217,19 @@ public class BookableAssetServiceTest {
         verify(repository, times(1)).save(argThat(
                 r -> r.getBookableAssets().size() == initialAssets
                         && r.getBookableAssets().stream().anyMatch(a ->
-                        a.getId().equals(existingAssetId)
-                                && a.getCalendarType().equals(calendarType)
-                                && a.getCalendarId().equals(calendarId)
-                                && a.getDescription().equals(assetDescription)
-                                && a.getTitle().equals(assetTitle))
+                        a.getId().equals(EXISTING_ASSET_ID)
+                                && a.getCalendarType().equals(GOOGLE_CALENDAR)
+                                && a.getCalendarId().equals(CALENDAR_ID)
+                                && a.getDescription().equals(ASSET_DESCRIPTION)
+                                && a.getTitle().equals(ASSET_TITLE))
         ));
     }
 
     private void thenBookableAssetIsDeletedFromResort(int initialAssets) {
-        service.deleteBookableAsset(resortId, existingAssetId);
+        service.deleteBookableAsset(RESORT_ID, EXISTING_ASSET_ID);
         verify(repository, times(1)).save(argThat(
                 r -> r.getBookableAssets().size() == initialAssets - 1
-                        && r.getBookableAssets().stream().noneMatch(a -> a.getId().equals(existingAssetId))
+                        && r.getBookableAssets().stream().noneMatch(a -> a.getId().equals(EXISTING_ASSET_ID))
         ));
     }
 

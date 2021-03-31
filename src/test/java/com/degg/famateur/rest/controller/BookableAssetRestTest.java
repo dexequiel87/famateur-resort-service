@@ -4,8 +4,9 @@ import capital.scalable.restdocs.AutoDocumentation;
 import capital.scalable.restdocs.jackson.JacksonResultHandlers;
 import capital.scalable.restdocs.response.ResponseModifyingPreprocessors;
 import com.degg.famateur.FamateurApplication;
-import com.degg.famateur.rest.model.ResortDto;
-import com.degg.famateur.service.ResortService;
+import com.degg.famateur.exception.InvalidBookableAssetException;
+import com.degg.famateur.rest.model.BookableAssetDto;
+import com.degg.famateur.service.BookableAssetService;
 import com.degg.famateur.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,25 +32,25 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.util.Arrays;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(ResortController.class)
+@WebMvcTest(BookableAssetController.class)
 @ContextConfiguration(classes = {FamateurApplication.class})
 @AutoConfigureRestDocs(outputDir = "target/generated-snippets")
 @ExtendWith(RestDocumentationExtension.class)
-public class ResortRestTest {
+public class BookableAssetRestTest {
 
+    private static final String RESORT_ID = "00001";
     MockMvc mockMvc;
 
     @Autowired
     ObjectMapper objectMapper;
 
     @MockBean
-    ResortService service;
+    BookableAssetService service;
 
     @Autowired
     private WebApplicationContext context;
@@ -57,13 +58,13 @@ public class ResortRestTest {
     @MockBean
     UserService userService;
 
-    private String validId;
+    private String BOOKABLE_ASSET_VALID_ID;
     private String endpointUrl;
 
     @BeforeEach
     void setup(RestDocumentationContextProvider restDocumentation) {
-        validId = "9451d9c51sc1s5d1csd231c";
-        endpointUrl = "/api/v1/resorts/";
+        BOOKABLE_ASSET_VALID_ID = "9451d9c51sc1s5d1csd231c";
+        endpointUrl = String.format("/api/v1/resorts/%s/assets/", RESORT_ID);
 
         mockMvc = MockMvcBuilders.webAppContextSetup(context)
                 .apply(SecurityMockMvcConfigurers.springSecurity())
@@ -93,13 +94,13 @@ public class ResortRestTest {
         .build();
     }
 
-    private ResortDto getValidResort() {
-        return mockResort("Mocked Resort 1", "Mocked Resort 1 long description");
+    private BookableAssetDto getValidBookableAsset() {
+        return mockBookableAsset("Mocked Asset 1", "Mocked Asset 1 long description");
     }
 
     @Test
     void list() throws Exception {
-        given(service.findAll()).willReturn(Arrays.asList(getValidResort()));
+        given(service.findAllAssetsByResortId(RESORT_ID)).willReturn(Arrays.asList(getValidBookableAsset()));
 
         mockMvc.perform(get(endpointUrl)
                 .param("pageSize", "20")
@@ -109,10 +110,10 @@ public class ResortRestTest {
 
     @Test
     void getById() throws Exception {
+        given(service.findBookableAssetByResortIdAndBookableAssetId(RESORT_ID, BOOKABLE_ASSET_VALID_ID))
+                .willReturn(getValidBookableAsset());
 
-        given(service.findById(validId)).willReturn(getValidResort());
-
-        mockMvc.perform(get(endpointUrl + validId)
+        mockMvc.perform(get(endpointUrl + BOOKABLE_ASSET_VALID_ID)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
@@ -120,71 +121,68 @@ public class ResortRestTest {
 
     @Test
     void create() throws Exception {
-
-        ResortDto resort = mockResort("Test Resort 1", "Test Resort 1 long description");
-        String resortJson = objectMapper.writeValueAsString(resort);
-
-        given(service.save(any())).willReturn(getValidResort());
-
+        BookableAssetDto assetDto = getValidBookableAsset();
+        String assetDtoJson = objectMapper.writeValueAsString(assetDto);
         mockMvc.perform(post(endpointUrl)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(resortJson))
+                .content(assetDtoJson))
                 .andExpect(status().isCreated());
+        verify(service, times(1)).addBookableAssetToResort(RESORT_ID, assetDto);
     }
 
     @Test
     void badRequestCreate() throws Exception {
-
-        ResortDto resort = mockResort("Test Resort 1", "Test Resort 1 long description");
-        String beerDtoJson = objectMapper.writeValueAsString(resort);
-
-        given(service.save(any())).willReturn(getValidResort());
+        BookableAssetDto assetDto = mockBookableAsset("", "Test Asset long description");
+        String assetDtoJson = objectMapper.writeValueAsString(assetDto);
 
         mockMvc.perform(post(endpointUrl)
-                .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(assetDtoJson))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     void badRequestUpdate() throws Exception {
 
-        ResortDto resort = mockResort("Test Resort 1", "Test Resort 1 long description");
-        String resortJson = objectMapper.writeValueAsString(resort);
+        BookableAssetDto bookableAssetDto = mockBookableAsset("", "Test Bookable Asset 1 long description");
+        String resortJson = objectMapper.writeValueAsString(bookableAssetDto);
 
-        given(service.save(any())).willReturn(getValidResort());
+        doThrow(InvalidBookableAssetException.class)
+            .when(service).addBookableAssetToResort(RESORT_ID, bookableAssetDto);
 
-        mockMvc.perform(put(endpointUrl + validId)
-                .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(put(endpointUrl + BOOKABLE_ASSET_VALID_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(resortJson))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     void update() throws Exception {
 
-        ResortDto resort = mockResort("Test Resort 1", "Test Resort 1 long description");
-        String resortJson = objectMapper.writeValueAsString(resort);
+        BookableAssetDto assetDto = mockBookableAsset("Test Asset 1", "Test Asset 1 long description");
+        String resortJson = objectMapper.writeValueAsString(assetDto);
 
-        given(service.save(any())).willReturn(getValidResort());
-
-        mockMvc.perform(put(endpointUrl + validId)
+        mockMvc.perform(put(endpointUrl + BOOKABLE_ASSET_VALID_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(resortJson))
                 .andExpect(status().isOk());
+        verify(service, times(1)).updateBookableAsset(RESORT_ID, assetDto.getId(), assetDto);
     }
 
     @Test
-    void delete() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.delete(endpointUrl + validId))
-                .andExpect(status().isOk());
-        verify(service, times(1)).deleteById(validId);
+    public void delete() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.delete(endpointUrl + BOOKABLE_ASSET_VALID_ID)
+        ).andExpect(status().isOk());
+        verify(service, times(1)).deleteBookableAsset(RESORT_ID, BOOKABLE_ASSET_VALID_ID);
     }
 
-    private ResortDto mockResort(String s, String s2) {
-        return ResortDto.builder()
+    private BookableAssetDto mockBookableAsset(String title, String description) {
+        return BookableAssetDto.builder()
                 .id("9451d9c51sc1s5d1csd231c")
-                .title(s)
-                .description(s2)
-                .enabled(Boolean.TRUE)
+                .title(title)
+                .description(description)
+                .calendarType("google-calendar")
+                .calendarId("00001")
                 .build();
     }
 }

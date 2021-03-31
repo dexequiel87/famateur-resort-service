@@ -33,20 +33,22 @@ public class BookableAssetServiceImpl implements BookableAssetService {
     }
 
     @Override
-    public void addBookableAssetToResort(String resortId, BookableAssetDto bookableAssetDto) {
+    public BookableAssetDto addBookableAssetToResort(String resortId, BookableAssetDto bookableAssetDto) {
         Resort resort = getResort(resortId);
         BookableAsset bookableAsset = mapper.toBookableAsset(bookableAssetDto);
         bookableAsset.setId(UUID.randomUUID().toString());
         resort.getBookableAssets().add(bookableAsset);
         repository.save(resort);
+        return mapper.toBookableAssetDto(bookableAsset);
     }
 
     @Override
-    public void updateBookableAsset(String resortId, String assetId, BookableAssetDto bookableAssetDto) {
+    public BookableAssetDto updateBookableAsset(String resortId, String assetId, BookableAssetDto bookableAssetDto) {
         Resort resort = getResort(resortId);
         BookableAsset bookableAsset = getBookableAssetFromResort(resort, assetId);
         updateBookableAsset(bookableAsset, bookableAssetDto);
         repository.save(resort);
+        return mapper.toBookableAssetDto(bookableAsset);
     }
 
     @Override
@@ -55,6 +57,12 @@ public class BookableAssetServiceImpl implements BookableAssetService {
         if (!removeBookableAssetFromResortIfExists(bookablessetId, resort))
             throw bookableAssetNotFoundException(bookablessetId);
         repository.save(resort);
+    }
+
+    @Override
+    public BookableAssetDto findBookableAssetByResortIdAndBookableAssetId(String resortId, String bookableAssetId) {
+        Resort resort = getResort(resortId);
+        return mapper.toBookableAssetDto(getBookableAssetFromResort(resort, bookableAssetId));
     }
 
     private boolean removeBookableAssetFromResortIfExists(String bookablessetId, Resort resort) {
