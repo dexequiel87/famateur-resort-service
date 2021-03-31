@@ -1,8 +1,5 @@
 package com.degg.famateur.rest.controller;
 
-import capital.scalable.restdocs.AutoDocumentation;
-import capital.scalable.restdocs.jackson.JacksonResultHandlers;
-import capital.scalable.restdocs.response.ResponseModifyingPreprocessors;
 import com.degg.famateur.FamateurApplication;
 import com.degg.famateur.exception.InvalidBookableAssetException;
 import com.degg.famateur.rest.model.BookableAssetDto;
@@ -19,15 +16,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
-import org.springframework.restdocs.cli.CliDocumentation;
-import org.springframework.restdocs.http.HttpDocumentation;
-import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
-import org.springframework.restdocs.operation.preprocess.Preprocessors;
-import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.util.Arrays;
@@ -65,33 +56,7 @@ public class BookableAssetRestTest {
     void setup(RestDocumentationContextProvider restDocumentation) {
         BOOKABLE_ASSET_VALID_ID = "9451d9c51sc1s5d1csd231c";
         endpointUrl = String.format("/api/v1/resorts/%s/assets/", RESORT_ID);
-
-        mockMvc = MockMvcBuilders.webAppContextSetup(context)
-                .apply(SecurityMockMvcConfigurers.springSecurity())
-                .alwaysDo(JacksonResultHandlers.prepareJackson(objectMapper))
-                .alwaysDo(MockMvcRestDocumentation.document("{class-name}/{method-name}",
-                        Preprocessors.preprocessRequest(),
-                        Preprocessors.preprocessResponse(
-                                ResponseModifyingPreprocessors.replaceBinaryContent(),
-                                ResponseModifyingPreprocessors.limitJsonArrayLength(objectMapper),
-                                Preprocessors.prettyPrint())))
-                .apply(MockMvcRestDocumentation.documentationConfiguration(restDocumentation)
-                        .uris()
-                        .withScheme("http")
-                        .withHost("localhost")
-                        .withPort(8080)
-                        .and().snippets()
-                        .withDefaults(CliDocumentation.curlRequest(),
-                                HttpDocumentation.httpRequest(),
-                                HttpDocumentation.httpResponse(),
-                                AutoDocumentation.requestFields(),
-                                AutoDocumentation.responseFields(),
-                                AutoDocumentation.pathParameters(),
-                                AutoDocumentation.requestParameters(),
-                                AutoDocumentation.description(),
-                                AutoDocumentation.methodAndPath(),
-                                AutoDocumentation.section()))
-        .build();
+        mockMvc = MockMvcFactory.getMockMvc(restDocumentation, context, objectMapper);
     }
 
     private BookableAssetDto getValidBookableAsset() {
@@ -101,7 +66,6 @@ public class BookableAssetRestTest {
     @Test
     void list() throws Exception {
         given(service.findAllAssetsByResortId(RESORT_ID)).willReturn(Arrays.asList(getValidBookableAsset()));
-
         mockMvc.perform(get(endpointUrl)
                 .param("pageSize", "20")
                 .accept(MediaType.APPLICATION_JSON))
@@ -112,7 +76,6 @@ public class BookableAssetRestTest {
     void getById() throws Exception {
         given(service.findBookableAssetByResortIdAndBookableAssetId(RESORT_ID, BOOKABLE_ASSET_VALID_ID))
                 .willReturn(getValidBookableAsset());
-
         mockMvc.perform(get(endpointUrl + BOOKABLE_ASSET_VALID_ID)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
@@ -134,7 +97,6 @@ public class BookableAssetRestTest {
     void badRequestCreate() throws Exception {
         BookableAssetDto assetDto = mockBookableAsset("", "Test Asset long description");
         String assetDtoJson = objectMapper.writeValueAsString(assetDto);
-
         mockMvc.perform(post(endpointUrl)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(assetDtoJson))
@@ -143,13 +105,10 @@ public class BookableAssetRestTest {
 
     @Test
     void badRequestUpdate() throws Exception {
-
         BookableAssetDto bookableAssetDto = mockBookableAsset("", "Test Bookable Asset 1 long description");
         String resortJson = objectMapper.writeValueAsString(bookableAssetDto);
-
         doThrow(InvalidBookableAssetException.class)
             .when(service).addBookableAssetToResort(RESORT_ID, bookableAssetDto);
-
         mockMvc.perform(put(endpointUrl + BOOKABLE_ASSET_VALID_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(resortJson))
@@ -158,10 +117,8 @@ public class BookableAssetRestTest {
 
     @Test
     void update() throws Exception {
-
         BookableAssetDto assetDto = mockBookableAsset("Test Asset 1", "Test Asset 1 long description");
         String resortJson = objectMapper.writeValueAsString(assetDto);
-
         mockMvc.perform(put(endpointUrl + BOOKABLE_ASSET_VALID_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(resortJson))

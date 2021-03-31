@@ -1,8 +1,5 @@
 package com.degg.famateur.rest.controller;
 
-import capital.scalable.restdocs.AutoDocumentation;
-import capital.scalable.restdocs.jackson.JacksonResultHandlers;
-import capital.scalable.restdocs.response.ResponseModifyingPreprocessors;
 import com.degg.famateur.FamateurApplication;
 import com.degg.famateur.rest.model.ResortDto;
 import com.degg.famateur.service.ResortService;
@@ -18,15 +15,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
-import org.springframework.restdocs.cli.CliDocumentation;
-import org.springframework.restdocs.http.HttpDocumentation;
-import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
-import org.springframework.restdocs.operation.preprocess.Preprocessors;
-import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.util.Arrays;
@@ -64,33 +55,7 @@ public class ResortRestTest {
     void setup(RestDocumentationContextProvider restDocumentation) {
         validId = "9451d9c51sc1s5d1csd231c";
         endpointUrl = "/api/v1/resorts/";
-
-        mockMvc = MockMvcBuilders.webAppContextSetup(context)
-                .apply(SecurityMockMvcConfigurers.springSecurity())
-                .alwaysDo(JacksonResultHandlers.prepareJackson(objectMapper))
-                .alwaysDo(MockMvcRestDocumentation.document("{class-name}/{method-name}",
-                        Preprocessors.preprocessRequest(),
-                        Preprocessors.preprocessResponse(
-                                ResponseModifyingPreprocessors.replaceBinaryContent(),
-                                ResponseModifyingPreprocessors.limitJsonArrayLength(objectMapper),
-                                Preprocessors.prettyPrint())))
-                .apply(MockMvcRestDocumentation.documentationConfiguration(restDocumentation)
-                        .uris()
-                        .withScheme("http")
-                        .withHost("localhost")
-                        .withPort(8080)
-                        .and().snippets()
-                        .withDefaults(CliDocumentation.curlRequest(),
-                                HttpDocumentation.httpRequest(),
-                                HttpDocumentation.httpResponse(),
-                                AutoDocumentation.requestFields(),
-                                AutoDocumentation.responseFields(),
-                                AutoDocumentation.pathParameters(),
-                                AutoDocumentation.requestParameters(),
-                                AutoDocumentation.description(),
-                                AutoDocumentation.methodAndPath(),
-                                AutoDocumentation.section()))
-        .build();
+        mockMvc = MockMvcFactory.getMockMvc(restDocumentation, context, objectMapper);
     }
 
     private ResortDto getValidResort() {
@@ -100,7 +65,6 @@ public class ResortRestTest {
     @Test
     void list() throws Exception {
         given(service.findAll()).willReturn(Arrays.asList(getValidResort()));
-
         mockMvc.perform(get(endpointUrl)
                 .param("pageSize", "20")
                 .accept(MediaType.APPLICATION_JSON))
@@ -109,9 +73,7 @@ public class ResortRestTest {
 
     @Test
     void getById() throws Exception {
-
         given(service.findById(validId)).willReturn(getValidResort());
-
         mockMvc.perform(get(endpointUrl + validId)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
@@ -120,12 +82,9 @@ public class ResortRestTest {
 
     @Test
     void create() throws Exception {
-
         ResortDto resort = mockResort("Test Resort 1", "Test Resort 1 long description");
         String resortJson = objectMapper.writeValueAsString(resort);
-
         given(service.save(any())).willReturn(getValidResort());
-
         mockMvc.perform(post(endpointUrl)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(resortJson))
@@ -134,38 +93,31 @@ public class ResortRestTest {
 
     @Test
     void badRequestCreate() throws Exception {
-
         ResortDto resort = mockResort("Test Resort 1", "Test Resort 1 long description");
-        String beerDtoJson = objectMapper.writeValueAsString(resort);
-
+        String resortDto = objectMapper.writeValueAsString(resort);
         given(service.save(any())).willReturn(getValidResort());
-
         mockMvc.perform(post(endpointUrl)
-                .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(resortDto))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     void badRequestUpdate() throws Exception {
-
         ResortDto resort = mockResort("Test Resort 1", "Test Resort 1 long description");
         String resortJson = objectMapper.writeValueAsString(resort);
-
         given(service.save(any())).willReturn(getValidResort());
-
         mockMvc.perform(put(endpointUrl + validId)
-                .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(resortJson))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     void update() throws Exception {
-
         ResortDto resort = mockResort("Test Resort 1", "Test Resort 1 long description");
         String resortJson = objectMapper.writeValueAsString(resort);
-
         given(service.save(any())).willReturn(getValidResort());
-
         mockMvc.perform(put(endpointUrl + validId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(resortJson))

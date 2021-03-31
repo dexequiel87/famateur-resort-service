@@ -37,7 +37,7 @@ public class BookableAssetController {
     public ResponseEntity<BookableAssetDto> get(
             @ApiParam(value = "ID of the Resort whose asset you need to retrieve", required = true)
             @PathVariable("resortId") String resortId,
-            @ApiParam(value = "ID of the Resort whose asset you need to retrieve", required = true)
+            @ApiParam(value = "ID of the Asset you need to retrieve", required = true)
             @PathVariable("assetId") String assetId) {
         return new ResponseEntity<>(service.findBookableAssetByResortIdAndBookableAssetId(resortId, assetId), HttpStatus.OK);
     }
